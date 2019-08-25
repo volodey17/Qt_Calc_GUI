@@ -53,10 +53,11 @@ private slots:
     void slotButSub();
     void slotButMul();
     void slotButDiv();
-    void slotButRes();//Обработка кнопки "результат"
+    void slotButRes(); //Обработка кнопки "результат"
 
 private:
-    int mSum; //результат
-    int mNextNumber; //следующее слагаемое
+    double mNextNumber1;
+    double mNextNumber2;
+    char OperationSumbol; // Символ операции над числами
 };
 #endif // CALCMAINWINDOW_H

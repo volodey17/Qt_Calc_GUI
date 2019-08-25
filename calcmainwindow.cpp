@@ -12,7 +12,7 @@
 CalcMainWindow::CalcMainWindow(QWidget *parent)
     : QWidget(parent)
 {
-    resize(200, 300); // ширина х высота
+    resize(300, 400); // ширина х высота
     setWindowTitle("Калькулятор");
     createWidgets();
     connect(pushButC, SIGNAL(clicked()), this, SLOT(slotClear()), Qt::UniqueConnection);
@@ -121,38 +121,66 @@ void CalcMainWindow::createWidgets()
 void CalcMainWindow::slotClear()
 {
     qDebug("slotClear");
-    lcdNumber->setText("(Slot Clear) - 0");
-    mSum = 0;
-    mNextNumber = 0;
+    lcdNumber->setText("(Start) 0");
+    mNextNumber1 = 0;
+    mNextNumber2 = 0;
+    OperationSumbol = NULL;
 }
 void CalcMainWindow::slotButPress(int pNum)
 {
     qDebug("slotButPress");
-    mNextNumber = mNextNumber*10 + pNum;
-    QString bufText = QString::number(mNextNumber);
+    QString bufText;
+
+    if (!OperationSumbol) {
+        mNextNumber1 = mNextNumber1*10 + pNum;
+        bufText = QString::number(mNextNumber1);}
+    else {
+        mNextNumber2 = mNextNumber2*10 + pNum;
+        bufText = QString::number(mNextNumber2);}
+
     lcdNumber->setText(bufText);
 }
 void CalcMainWindow::slotButAdd()
 {
     qDebug("slotButAdd");
+    if (OperationSumbol)
+        slotButRes();
+    OperationSumbol = '+';
 }
 void CalcMainWindow::slotButSub()
 {
     qDebug("slotButSub");
+    if (OperationSumbol)
+        slotButRes();
+    OperationSumbol = '-';
 }
 void CalcMainWindow::slotButMul()
 {
     qDebug("slotButMul");
+    if (OperationSumbol)
+        slotButRes();
+    OperationSumbol = '*';
 }
 void CalcMainWindow::slotButDiv()
 {
     qDebug("slotButDiv");
+    if (OperationSumbol)
+        slotButRes();
+    OperationSumbol = '/';
 }
 void CalcMainWindow::slotButRes()
 {
-    qDebug("slotRes");
-    mSum += mNextNumber;
-    QString bufText = QString::number(mSum);
+    qDebug("slotButRes");
+    switch (OperationSumbol) {
+    case '+': mNextNumber1 = mNextNumber1 + mNextNumber2; break;
+    case '-': mNextNumber1 = mNextNumber1 - mNextNumber2; break;
+    case '*': mNextNumber1 = mNextNumber1 * mNextNumber2; break;
+    case '/': mNextNumber1 = mNextNumber1 / mNextNumber2; break;
+    }
+
+    QString bufText = QString::number(mNextNumber1);
     lcdNumber->setText(bufText);
-    mNextNumber = 0;
+    //mNextNumber1 = 0;
+    mNextNumber2 = 0;
+    OperationSumbol = NULL;
 }
