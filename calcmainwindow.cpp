@@ -1,5 +1,6 @@
 //ЭТО файл реализации
 // stop page is 370
+//ПЕРЕПИСАТЬ клавиши операций через QSignalMapper!!! (уменшит число слотов)
 
 #include "calcmainwindow.h"
 #include <QPushButton>
@@ -15,6 +16,7 @@ CalcMainWindow::CalcMainWindow(QWidget *parent)
     resize(300, 400); // ширина х высота
     setWindowTitle("Калькулятор");
     createWidgets();
+    // подключение сигнала к слоту через макрос (устаревший метод)
     connect(pushButC, SIGNAL(clicked()), this, SLOT(slotClear()), Qt::UniqueConnection);
     connect(pushButRes, SIGNAL(clicked()), this, SLOT(slotButRes()), Qt::UniqueConnection);
     connect(pushButAdd, SIGNAL(clicked()), this, SLOT(slotButAdd()), Qt::UniqueConnection);
@@ -22,7 +24,8 @@ CalcMainWindow::CalcMainWindow(QWidget *parent)
     connect(pushButMul, SIGNAL(clicked()), this, SLOT(slotButMul()), Qt::UniqueConnection);
     connect(pushButDiv, SIGNAL(clicked()), this, SLOT(slotButDiv()), Qt::UniqueConnection);
 
-    //используем QSignalMapper для эффективного использования сигнально-слотовых соединений
+    //QSignalMapper привязывает некоторое значение к каждому сигналу и позволяет
+    //избежать чрезмерного дополнительного создания слотов или специализированных классов.
     mMapper = new QSignalMapper(this);
     connect(pushBut_1, SIGNAL(clicked()), mMapper, SLOT(map()), Qt::UniqueConnection);
     connect(pushBut_2, SIGNAL(clicked()), mMapper, SLOT(map()), Qt::UniqueConnection);
@@ -46,7 +49,8 @@ CalcMainWindow::CalcMainWindow(QWidget *parent)
     mMapper->setMapping(pushBut_0, 0);
     slotClear();
     connect(mMapper, SIGNAL(mapped(int)), this, SLOT(slotButPress(int)), Qt::UniqueConnection);
-
+    //подключение сигнала к слоту на основе указателей:
+    //connect(button, &QPushButton::clicked, this, &MainWindow::slotButton);
 
 }
 //деструктор
