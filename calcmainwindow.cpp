@@ -12,6 +12,7 @@ CalcMainWindow::CalcMainWindow(QWidget *parent) :   //конструктор
     ptrUi (new Ui::CalcMainWindow)
 {
     ptrUi->setupUi(this);
+
 //Способ#1 - подключение сигнала к слоту через макрос (устаревший метод)
     connect(ptrUi->pushButton_0, SIGNAL(clicked()), this, SLOT(slotClickedNumber()), Qt::UniqueConnection);
     connect(ptrUi->pushButton_1, SIGNAL(clicked()), this, SLOT(slotClickedNumber()), Qt::UniqueConnection);
@@ -23,6 +24,19 @@ CalcMainWindow::CalcMainWindow(QWidget *parent) :   //конструктор
     connect(ptrUi->pushButton_7, SIGNAL(clicked()), this, SLOT(slotClickedNumber()), Qt::UniqueConnection);
     connect(ptrUi->pushButton_8, SIGNAL(clicked()), this, SLOT(slotClickedNumber()), Qt::UniqueConnection);
     connect(ptrUi->pushButton_9, SIGNAL(clicked()), this, SLOT(slotClickedNumber()), Qt::UniqueConnection);
+
+    connect(ptrUi->pushButton_Dot, SIGNAL(clicked()), this, SLOT(slotClickedDot()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_Invers, SIGNAL(clicked()), this, SLOT(slotClickedOperation()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_Percent, SIGNAL(clicked()), this, SLOT(slotClickedOperation()), Qt::UniqueConnection);
+
+    connect(ptrUi->pushButton_Add, SIGNAL(clicked()), this, SLOT(slotClickedMath()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_Sub, SIGNAL(clicked()), this, SLOT(slotClickedMath()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_Mul, SIGNAL(clicked()), this, SLOT(slotClickedMath()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_Div, SIGNAL(clicked()), this, SLOT(slotClickedMath()), Qt::UniqueConnection);
+
+    connect(ptrUi->pushButton_Equal, SIGNAL(clicked()), this,SLOT(slotClickedEqual()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_AC, SIGNAL(clicked()), this,SLOT(slotClickedAC()), Qt::UniqueConnection);
+
 //    connect(pushButC, SIGNAL(clicked()), this, SLOT(slotClear()), Qt::UniqueConnection);
 
 //Способ#2 - QSignalMapper привязывает некоторое значение к каждому сигналу и позволяет
@@ -35,6 +49,11 @@ CalcMainWindow::CalcMainWindow(QWidget *parent) :   //конструктор
 //    connect(mMapper, SIGNAL(mapped(int)), this, SLOT(slotButPress(int)), Qt::UniqueConnection);
 //Способ#3 - Подключение сигнала к слоту на основе указателей:
 //    connect(button, &QPushButton::clicked, this, &MainWindow::slotButton);
+
+    ptrUi->pushButton_Add->setCheckable(true); //теперь на клавише можно взвести флаг.
+    ptrUi->pushButton_Sub->setCheckable(true);
+    ptrUi->pushButton_Mul->setCheckable(true);
+    ptrUi->pushButton_Div->setCheckable(true);
 }
 
 CalcMainWindow::~CalcMainWindow()   //деструктор
@@ -50,74 +69,92 @@ void CalcMainWindow::slotClickedNumber()
     double bufNumber;
     QString bufLabel;
 
-    bufNumber = (ptrUi->DisplayLabel->text() + bufButton->text()).toDouble();
-    bufLabel = QString::number(bufNumber, 'g', 15);
-
+    if (ptrUi->DisplayLabel->text().contains('.') && bufButton->text() == "0")
+    {
+        bufLabel = (ptrUi->DisplayLabel->text() + bufButton->text());
+    } else
+    {
+        bufNumber = (ptrUi->DisplayLabel->text() + bufButton->text()).toDouble();
+        bufLabel = QString::number(bufNumber, 'g', 15);
+    }
     ptrUi->DisplayLabel->setText(bufLabel);
 }
-//void CalcMainWindow::slotClear()
-//{
-//    qDebug("slotClear");
-//    lcdNumber->display("0");
-//    mNextNumber1 = 0;
-//    mNextNumber2 = 0;
-//    OperationSumbol = NULL;
-//}
-//void CalcMainWindow::slotButPress(int pNum)
-//{
-//    qDebug("slotButPress");
-//    QString bufText;
 
-//    if (!OperationSumbol) {
-//        mNextNumber1 = mNextNumber1*10 + pNum;
-//        bufText = QString::number(mNextNumber1);}
-//    else {
-//        mNextNumber2 = mNextNumber2*10 + pNum;
-//        bufText = QString::number(mNextNumber2);}
+void CalcMainWindow::slotClickedDot()
+{
+    if (!(ptrUi->DisplayLabel->text().contains('.')))
+        ptrUi->DisplayLabel->setText(ptrUi->DisplayLabel->text() + ".");
+}
 
-//    pointUi->DisplayLabel->setText(bufText);
-//}
-//void CalcMainWindow::slotButAdd()
-//{
-//    qDebug("slotButAdd");
-//    if (OperationSumbol)
-//        slotButRes();
-//    OperationSumbol = '+';
-//}
-//void CalcMainWindow::slotButSub()
-//{
-//    qDebug("slotButSub");
-//    if (OperationSumbol)
-//        slotButRes();
-//    OperationSumbol = '-';
-//}
-//void CalcMainWindow::slotButMul()
-//{
-//    qDebug("slotButMul");
-//    if (OperationSumbol)
-//        slotButRes();
-//    OperationSumbol = '*';
-//}
-//void CalcMainWindow::slotButDiv()
-//{
-//    qDebug("slotButDiv");
-//    if (OperationSumbol)
-//        slotButRes();
-//    OperationSumbol = '/';
-//}
-//void CalcMainWindow::slotButRes()
-//{
-//    qDebug("slotButRes");
-//    switch (OperationSumbol) {
-//    case '+': mNextNumber1 = mNextNumber1 + mNextNumber2; break;
-//    case '-': mNextNumber1 = mNextNumber1 - mNextNumber2; break;
-//    case '*': mNextNumber1 = mNextNumber1 * mNextNumber2; break;
-//    case '/': mNextNumber1 = mNextNumber1 / mNextNumber2; break;
-//    }
+void CalcMainWindow::slotClickedOperation()
+{
+    QPushButton *bufButton = static_cast<QPushButton *>(sender());
+    double bufNumber;
+    QString bufLabel;
 
-//    QString bufText = QString::number(mNextNumber1);
-//    lcdNumber->display(bufText);
-//    //mNextNumber1 = 0;
-//    mNextNumber2 = 0;
-//    OperationSumbol = NULL;
-//}
+    if (bufButton->text() == "+/-")
+    {
+        bufNumber = ptrUi->DisplayLabel->text().toDouble();
+        bufNumber = bufNumber * -1;
+    } else if (bufButton->text() == "%") {
+        bufNumber = ptrUi->DisplayLabel->text().toDouble();
+        bufNumber = bufNumber * 0.01;
+    }
+    bufLabel = QString::number(bufNumber, 'g', 15);
+    ptrUi->DisplayLabel->setText(bufLabel);
+}
+
+void CalcMainWindow::slotClickedMath()
+{
+     QPushButton *bufButton = static_cast<QPushButton *>(sender());
+     numberFirst = ptrUi->DisplayLabel->text().toDouble();
+     ptrUi->DisplayLabel->clear();
+
+     bufButton->setChecked(true);
+}
+
+void CalcMainWindow::slotClickedEqual()
+{
+    double bufNumber = 0;
+    QString bufLabel;
+    numberSecond = ptrUi->DisplayLabel->text().toDouble();
+
+    if(ptrUi->pushButton_Add->isChecked())
+    {
+        bufNumber = numberFirst + numberSecond;
+        ptrUi->pushButton_Add->setChecked(false);
+    } else if (ptrUi->pushButton_Sub->isChecked())
+    {
+        bufNumber = numberFirst - numberSecond;
+        ptrUi->pushButton_Sub->setChecked(false);
+    } else if (ptrUi->pushButton_Mul->isChecked())
+    {
+        bufNumber = numberFirst * numberSecond;
+        ptrUi->pushButton_Mul->setChecked(false);
+    } else if (ptrUi->pushButton_Div->isChecked())
+    {   qDebug() << "Div";
+        if (numberSecond == 0.0)
+        {
+            qDebug() << "==0!";
+            bufNumber = 0;
+        } else
+        {
+            qDebug() << "div_oper";
+            bufNumber = numberFirst / numberSecond;
+        }
+        ptrUi->pushButton_Div->setChecked(false);
+    }
+
+    bufLabel = QString::number(bufNumber, 'g', 15);
+    ptrUi->DisplayLabel->setText(bufLabel);
+}
+
+void CalcMainWindow::slotClickedAC()
+{
+    ptrUi->pushButton_Add->setChecked(false);
+    ptrUi->pushButton_Sub->setChecked(false);
+    ptrUi->pushButton_Mul->setChecked(false);
+    ptrUi->pushButton_Div->setChecked(false);
+
+    ptrUi->DisplayLabel->setText("0");
+}
