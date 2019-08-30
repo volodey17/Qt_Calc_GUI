@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QString>
 #include <QDebug>
+#include <QtMath>
 
 CalcMainWindow::CalcMainWindow(QWidget *parent) :   //конструктор
     QMainWindow(parent),
@@ -28,6 +29,10 @@ CalcMainWindow::CalcMainWindow(QWidget *parent) :   //конструктор
     connect(ptrUi->pushButton_Dot, SIGNAL(clicked()), this, SLOT(slotClickedDot()), Qt::UniqueConnection);
     connect(ptrUi->pushButton_Invers, SIGNAL(clicked()), this, SLOT(slotClickedOperation()), Qt::UniqueConnection);
     connect(ptrUi->pushButton_Percent, SIGNAL(clicked()), this, SLOT(slotClickedOperation()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_1_x, SIGNAL(clicked()), this, SLOT(slotClickedOperation()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_Sqrt, SIGNAL(clicked()), this, SLOT(slotClickedOperation()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_Pow2, SIGNAL(clicked()), this, SLOT(slotClickedOperation()), Qt::UniqueConnection);
+    connect(ptrUi->pushButton_Pi, SIGNAL(clicked()), this, SLOT(slotClickedOperation()), Qt::UniqueConnection);
 
     connect(ptrUi->pushButton_Add, SIGNAL(clicked()), this, SLOT(slotClickedMath()), Qt::UniqueConnection);
     connect(ptrUi->pushButton_Sub, SIGNAL(clicked()), this, SLOT(slotClickedMath()), Qt::UniqueConnection);
@@ -63,8 +68,8 @@ CalcMainWindow::~CalcMainWindow()   //деструктор
 
 //  Реализация слотов обработки событий.
 void CalcMainWindow::slotClickedNumber()
-{   //           (QPushButton *) sender() - устаревший способ кастования объектов С-style
-    //static_cast<QPushButton*>(sender()) - современный способ.
+{   //           (QPushButton *) sender() - устаревший способ приведения типов (С-style)
+    //static_cast<QPushButton*>(sender()) - современный способ приведения типов.
     QPushButton *bufButton = static_cast<QPushButton *>(sender());
     double bufNumber;
     QString bufLabel;
@@ -89,16 +94,36 @@ void CalcMainWindow::slotClickedDot()
 void CalcMainWindow::slotClickedOperation()
 {
     QPushButton *bufButton = static_cast<QPushButton *>(sender());
-    double bufNumber;
+    double bufNumber = 0;
     QString bufLabel;
 
     if (bufButton->text() == "+/-")
     {
         bufNumber = ptrUi->DisplayLabel->text().toDouble();
         bufNumber = bufNumber * -1;
-    } else if (bufButton->text() == "%") {
+    } else if (bufButton->text() == "%")
+    {
         bufNumber = ptrUi->DisplayLabel->text().toDouble();
         bufNumber = bufNumber * 0.01;
+    } else if (bufButton->text() == "Vx")
+    {
+        bufNumber = ptrUi->DisplayLabel->text().toDouble();
+        bufNumber = qSqrt(bufNumber);
+    }
+    else if (bufButton->text() == "x^2")
+    {
+        bufNumber = ptrUi->DisplayLabel->text().toDouble();
+        bufNumber = qPow(bufNumber, 2);
+    }
+    else if (bufButton->text() == "1/x")
+    {
+        bufNumber = ptrUi->DisplayLabel->text().toDouble();
+        bufNumber = qPow(bufNumber, -1);
+    }
+    else if (bufButton->text() == "pi")
+    {
+        bufNumber = ptrUi->DisplayLabel->text().toDouble();
+        bufNumber = M_PI;
     }
     bufLabel = QString::number(bufNumber, 'g', 15);
     ptrUi->DisplayLabel->setText(bufLabel);

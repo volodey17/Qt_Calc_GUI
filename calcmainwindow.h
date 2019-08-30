@@ -12,6 +12,7 @@ class CalcMainWindow : public QMainWindow //CalcMainWindow унаследуем 
     Q_OBJECT // - макрос, который будет обработан метаобъектным компилятором moc
 
 public:
+    //(приведение типов, кастование)
     //Явный конструктор - предотвращает неявное преобразование типов при инициализации
     explicit CalcMainWindow(QWidget *parent = nullptr);
     ~CalcMainWindow();
