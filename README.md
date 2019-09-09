@@ -14,6 +14,7 @@
 
 - [ ] IN + IN = Res потом IN - модифицирует RES, как продолжение IN
 - [x] Двойное нажатие Equal  - ошибка индикации
+- [ ] IN1 + IN2 + IN3 = (IN2+IN3)
 
 
 ![GitHub Logo](/resourse/title.png)

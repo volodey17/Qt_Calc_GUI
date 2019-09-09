@@ -59,6 +59,7 @@ CalcMainWindow::CalcMainWindow(QWidget *parent) :   //конструктор
     ptrUi->pushButton_Sub->setCheckable(true);
     ptrUi->pushButton_Mul->setCheckable(true);
     ptrUi->pushButton_Div->setCheckable(true);
+    slotClickedAC();
 }
 
 CalcMainWindow::~CalcMainWindow()   //деструктор
@@ -74,7 +75,11 @@ void CalcMainWindow::slotClickedNumber()
     double bufNumber;
     QString bufLabel;
 
-    if (ptrUi->DisplayLabel->text().contains('.') && bufButton->text() == "0")
+    if (ptrUi->DisplayLabel->text().contains('e'))
+    {
+        // тут обрабатываем число в научном формате
+        return;
+    } else if (ptrUi->DisplayLabel->text().contains('.') && bufButton->text() == "0") // обработка "0." + "0"
     {
         bufLabel = (ptrUi->DisplayLabel->text() + bufButton->text());
     } else
@@ -105,12 +110,12 @@ void CalcMainWindow::slotClickedOperation()
     {
         bufNumber = ptrUi->DisplayLabel->text().toDouble();
         bufNumber = bufNumber * 0.01;
-    } else if (bufButton->text() == "Vx")
+    } else if (bufButton->text() == "√x")
     {
         bufNumber = ptrUi->DisplayLabel->text().toDouble();
         bufNumber = qSqrt(bufNumber);
     }
-    else if (bufButton->text() == "x^2")
+    else if (bufButton->text() == "x²")
     {
         bufNumber = ptrUi->DisplayLabel->text().toDouble();
         bufNumber = qPow(bufNumber, 2);
@@ -120,7 +125,7 @@ void CalcMainWindow::slotClickedOperation()
         bufNumber = ptrUi->DisplayLabel->text().toDouble();
         bufNumber = qPow(bufNumber, -1);
     }
-    else if (bufButton->text() == "pi")
+    else if (bufButton->text() == "π")
     {
         bufNumber = ptrUi->DisplayLabel->text().toDouble();
         bufNumber = M_PI;
@@ -129,20 +134,19 @@ void CalcMainWindow::slotClickedOperation()
     ptrUi->DisplayLabel->setText(bufLabel);
 }
 
-void CalcMainWindow::slotClickedMath()
+void CalcMainWindow::slotClickedMath() // При нажатии +,-,*,/ взодим флаг соответствующей клавиши.
 {
-     QPushButton *bufButton = static_cast<QPushButton *>(sender());
-     numberFirst = ptrUi->DisplayLabel->text().toDouble();
-     ptrUi->DisplayLabel->clear();
-
-     bufButton->setChecked(true);
+    QPushButton *bufButton = static_cast<QPushButton *>(sender());
+    numberFirst = ptrUi->DisplayLabel->text().toDouble();          // 1st number save.
+    ptrUi->DisplayLabel->clear();
+    bufButton->setChecked(true);
 }
 
 void CalcMainWindow::slotClickedEqual()
 {
     double bufNumber = 0;
     QString bufLabel;
-    numberSecond = ptrUi->DisplayLabel->text().toDouble();
+    numberSecond = ptrUi->DisplayLabel->text().toDouble();  //2nd number save.
 
     if(ptrUi->pushButton_Add->isChecked())
     {

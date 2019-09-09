@@ -19,8 +19,8 @@ public:
 
 private:
     Ui::CalcMainWindow *ptrUi; //через этот указатель будем обращаться к элементам UI
-    double numberFirst;
-    double numberSecond;
+    double numberFirst = 0;
+    double numberSecond = 0;
     //посредник между объектами посылающими сигнал и слотом, который принимает параметр
     //изменяющийся в зависимости от объекта, который его выполнил.
     //QSignalMapper *mMapper ;
