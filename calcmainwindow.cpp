@@ -77,15 +77,21 @@ void CalcMainWindow::slotClickedNumber()
 
     if (ptrUi->DisplayLabel->text().contains('e'))
     {
-        // тут обрабатываем число в научном формате
+//        // тут обрабатываем число в научном формате
+//        bufNumber = (ptrUi->DisplayLabel->text().toDouble());
+//        qDebug() << bufNumber;
+//        bufNumber += bufButton->text().toDouble();
+//        qDebug() << bufNumber;
+//        bufLabel = QString::number(bufNumber);
+//        qDebug() << bufLabel;
         return;
     } else if (ptrUi->DisplayLabel->text().contains('.') && bufButton->text() == "0") // обработка "0." + "0"
     {
-        bufLabel = (ptrUi->DisplayLabel->text() + bufButton->text());
+        bufLabel = ptrUi->DisplayLabel->text() + bufButton->text();
     } else
     {
         bufNumber = (ptrUi->DisplayLabel->text() + bufButton->text()).toDouble();
-        bufLabel = QString::number(bufNumber, 'g', 15);
+        bufLabel = QString::number(bufNumber, 'g', 15);     // перевод числа в QString;
     }
     ptrUi->DisplayLabel->setText(bufLabel);
 }
